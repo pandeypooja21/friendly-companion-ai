@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,7 +6,7 @@
   :root {
     --radius: 1rem;
     
-    --background: 210 20% 98%;
+    --background: 0 0% 100%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -35,11 +34,11 @@
     --input: 214 32% 91%;
     --ring: 222 84% 5%;
 
-    --companion-primary: 210 100% 50%;
+    --companion-primary: 0 80% 60%;
     --companion-foreground: 0 0% 100%;
-    --companion-muted: 210 30% 92%;
-    --companion-accent: 220 90% 56%;
-    --companion-light: 210 50% 96%;
+    --companion-muted: 0 30% 92%;
+    --companion-accent: 0 90% 65%;
+    --companion-light: 0 50% 96%;
     --companion-emergency: 0 80% 60%;
   }
 }
@@ -141,12 +140,27 @@
     transition: opacity 300ms, transform 300ms;
   }
   
-  /* Custom styles for companion chat bubbles */
   .chat-bubble-companion {
     @apply bg-companion text-white rounded-2xl rounded-bl-none p-4 shadow-soft animate-appear;
   }
   
   .chat-bubble-user {
     @apply bg-white text-foreground rounded-2xl rounded-br-none p-4 shadow-soft animate-appear;
+  }
+  
+  .health-status-good {
+    @apply bg-green-100 text-green-600 border border-green-200 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .health-status-warning {
+    @apply bg-yellow-100 text-yellow-600 border border-yellow-200 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .health-status-alert {
+    @apply bg-companion-emergency/20 text-companion-emergency border border-companion-emergency/30 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .notification-badge {
+    @apply absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-companion-emergency rounded-full;
   }
 }
