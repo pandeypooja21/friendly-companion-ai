@@ -27,34 +27,34 @@ const App = () => (
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <HomePage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/companion" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <CompanionPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/reminders" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <RemindersPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/health" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <HealthPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/emergency" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <EmergencyPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/settings" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <SettingsPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
           </Routes>
