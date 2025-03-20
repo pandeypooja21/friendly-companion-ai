@@ -29,6 +29,7 @@ const registerSchema = z.object({
 
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "register" | "forgotPassword">("login");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -52,38 +53,49 @@ const AuthPage = () => {
 
   const handleLogin = async (values: z.infer<typeof loginSchema>) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      setIsLoading(true);
+      console.log("Attempting login with:", values.email);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
       if (error) {
+        console.error("Login error:", error);
         toast({
-          title: "Error",
+          title: "Login Failed",
           description: error.message,
           variant: "destructive",
         });
         return;
       }
 
-      toast({
-        title: "Success!",
-        description: "You have successfully signed in",
-      });
-      navigate("/");
+      if (data?.user) {
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully signed in",
+        });
+        navigate("/");
+      }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Unexpected login error:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleRegister = async (values: z.infer<typeof registerSchema>) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      setIsLoading(true);
+      console.log("Attempting registration with:", values.email);
+      
+      const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
         options: {
@@ -95,33 +107,56 @@ const AuthPage = () => {
       });
 
       if (error) {
+        console.error("Registration error:", error);
         toast({
-          title: "Error",
+          title: "Registration Failed",
           description: error.message,
           variant: "destructive",
         });
         return;
       }
 
-      toast({
-        title: "Registration Successful",
-        description: "Please check your email for the confirmation link",
-      });
-
-      // Switch to login mode after successful registration
-      setMode("login");
+      // If we have a user object but confirmation was sent, inform the user
+      if (data?.user && data.user.identities && data.user.identities.length > 0) {
+        if (data.user.confirmed_at) {
+          // User is already confirmed
+          toast({
+            title: "Registration Successful",
+            description: "Your account has been created. You can now log in.",
+          });
+          
+          // Auto-fill the login form
+          loginForm.setValue("email", values.email);
+          loginForm.setValue("password", values.password);
+          
+          // Switch to login mode
+          setMode("login");
+        } else {
+          // User needs email confirmation
+          toast({
+            title: "Registration Successful",
+            description: "Please check your email for the confirmation link",
+          });
+          
+          // Switch to login mode after successful registration
+          setMode("login");
+        }
+      }
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Unexpected registration error:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleForgotPassword = async (email: string) => {
     try {
+      setIsLoading(true);
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
@@ -149,6 +184,8 @@ const AuthPage = () => {
         description: "An unexpected error occurred",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -224,8 +261,8 @@ const AuthPage = () => {
                   )}
                 />
 
-                <Button type="submit" className="w-full" disabled={loginForm.formState.isSubmitting}>
-                  {loginForm.formState.isSubmitting ? "Signing in..." : "Sign In"}
+                <Button type="submit" className="w-full" disabled={isLoading || loginForm.formState.isSubmitting}>
+                  {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
 
                 <div className="text-center mt-4">
@@ -329,8 +366,8 @@ const AuthPage = () => {
                   )}
                 />
 
-                <Button type="submit" className="w-full" disabled={registerForm.formState.isSubmitting}>
-                  {registerForm.formState.isSubmitting ? "Registering..." : "Register"}
+                <Button type="submit" className="w-full" disabled={isLoading || registerForm.formState.isSubmitting}>
+                  {isLoading ? "Registering..." : "Register"}
                 </Button>
 
                 <div className="text-center mt-4">
@@ -375,8 +412,9 @@ const AuthPage = () => {
               <Button
                 onClick={() => handleForgotPassword(loginForm.getValues("email"))}
                 className="w-full"
+                disabled={isLoading}
               >
-                Send Reset Link
+                {isLoading ? "Sending..." : "Send Reset Link"}
               </Button>
 
               <div className="text-center mt-4">
