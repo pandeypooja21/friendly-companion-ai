@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Phone, User, Lock, ArrowRight } from "lucide-react";
+import { Mail, User, Lock, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,14 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import PageLayout from "@/components/layout/PageLayout";
 
-const phoneRegex = /^\+[1-9]\d{1,14}$/;
-
 const loginSchema = z.object({
-  phone: z.string().regex(phoneRegex, { message: "Invalid phone number. Please include country code (e.g., +1)" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
 const registerSchema = z.object({
-  phone: z.string().regex(phoneRegex, { message: "Invalid phone number. Please include country code (e.g., +1)" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
   age: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 50, {
     message: "Age must be a number and at least 50",
@@ -28,23 +28,23 @@ const registerSchema = z.object({
 });
 
 const AuthPage = () => {
-  const [mode, setMode] = useState<"login" | "register" | "verify">("login");
-  const [phone, setPhone] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
+  const [mode, setMode] = useState<"login" | "register" | "forgotPassword">("login");
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      phone: "",
+      email: "",
+      password: "",
     },
   });
 
   const registerForm = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      phone: "",
+      email: "",
+      password: "",
       fullName: "",
       age: "",
     },
@@ -52,8 +52,9 @@ const AuthPage = () => {
 
   const handleLogin = async (values: z.infer<typeof loginSchema>) => {
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: values.phone,
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
       });
 
       if (error) {
@@ -65,12 +66,11 @@ const AuthPage = () => {
         return;
       }
 
-      setPhone(values.phone);
-      setMode("verify");
       toast({
-        title: "Verification code sent",
-        description: "Please check your phone for the verification code",
+        title: "Success!",
+        description: "You have successfully signed in",
       });
+      navigate("/");
     } catch (error) {
       console.error("Login error:", error);
       toast({
@@ -83,8 +83,9 @@ const AuthPage = () => {
 
   const handleRegister = async (values: z.infer<typeof registerSchema>) => {
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: values.phone,
+      const { error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
         options: {
           data: {
             full_name: values.fullName,
@@ -102,12 +103,13 @@ const AuthPage = () => {
         return;
       }
 
-      setPhone(values.phone);
-      setMode("verify");
       toast({
-        title: "Verification code sent",
-        description: "Please check your phone for the verification code",
+        title: "Registration Successful",
+        description: "Please check your email for the confirmation link",
       });
+
+      // Switch to login mode after successful registration
+      setMode("login");
     } catch (error) {
       console.error("Registration error:", error);
       toast({
@@ -118,17 +120,15 @@ const AuthPage = () => {
     }
   };
 
-  const handleVerify = async () => {
+  const handleForgotPassword = async (email: string) => {
     try {
-      const { error, data } = await supabase.auth.verifyOtp({
-        phone,
-        token: verificationCode,
-        type: "sms",
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
 
       if (error) {
         toast({
-          title: "Verification Failed",
+          title: "Error",
           description: error.message,
           variant: "destructive",
         });
@@ -136,27 +136,16 @@ const AuthPage = () => {
       }
 
       toast({
-        title: "Success!",
-        description: "You have successfully signed in",
+        title: "Password Reset Email Sent",
+        description: "Please check your email for the password reset link",
       });
 
-      // If user is registered for the first time, update profile with age
-      if (mode === "register") {
-        const age = Number(registerForm.getValues("age"));
-        const fullName = registerForm.getValues("fullName");
-        
-        await supabase.from("user_profiles").upsert({
-          id: data.user?.id,
-          full_name: fullName,
-          age: age,
-        });
-      }
-
-      navigate("/");
+      // Switch to login mode after sending reset email
+      setMode("login");
     } catch (error) {
-      console.error("Verification error:", error);
+      console.error("Password reset error:", error);
       toast({
-        title: "Verification Failed",
+        title: "Error",
         description: "An unexpected error occurred",
         variant: "destructive",
       });
@@ -168,14 +157,14 @@ const AuthPage = () => {
       <div className="w-full max-w-md mx-auto py-8 space-y-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-companion">
-            {mode === "login" ? "Welcome Back" : mode === "register" ? "Create Account" : "Verify Your Phone"}
+            {mode === "login" ? "Welcome Back" : mode === "register" ? "Create Account" : "Reset Password"}
           </h1>
           <p className="text-muted-foreground mt-2">
             {mode === "login"
               ? "Sign in to access your companion"
               : mode === "register"
               ? "Register to get started with your personal companion"
-              : "Enter the verification code sent to your phone"}
+              : "Enter your email to receive a password reset link"}
           </p>
         </div>
 
@@ -185,15 +174,46 @@ const AuthPage = () => {
               <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
                 <FormField
                   control={loginForm.control}
-                  name="phone"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number (with country code)</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <Input
-                            placeholder="+1234567890"
+                            placeholder="your@email.com"
+                            className="pl-10"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={loginForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex justify-between items-center">
+                        <FormLabel>Password</FormLabel>
+                        <button 
+                          type="button"
+                          className="text-xs text-companion hover:underline"
+                          onClick={() => setMode("forgotPassword")}
+                        >
+                          Forgot password?
+                        </button>
+                      </div>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
                             className="pl-10"
                             {...field}
                           />
@@ -205,7 +225,7 @@ const AuthPage = () => {
                 />
 
                 <Button type="submit" className="w-full" disabled={loginForm.formState.isSubmitting}>
-                  {loginForm.formState.isSubmitting ? "Sending Code..." : "Send Verification Code"}
+                  {loginForm.formState.isSubmitting ? "Signing in..." : "Sign In"}
                 </Button>
 
                 <div className="text-center mt-4">
@@ -229,15 +249,37 @@ const AuthPage = () => {
               <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-4">
                 <FormField
                   control={registerForm.control}
-                  name="phone"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number (with country code)</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <Input
-                            placeholder="+1234567890"
+                            placeholder="your@email.com"
+                            className="pl-10"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={registerForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
                             className="pl-10"
                             {...field}
                           />
@@ -288,7 +330,7 @@ const AuthPage = () => {
                 />
 
                 <Button type="submit" className="w-full" disabled={registerForm.formState.isSubmitting}>
-                  {registerForm.formState.isSubmitting ? "Sending Code..." : "Send Verification Code"}
+                  {registerForm.formState.isSubmitting ? "Registering..." : "Register"}
                 </Button>
 
                 <div className="text-center mt-4">
@@ -307,41 +349,45 @@ const AuthPage = () => {
             </Form>
           )}
 
-          {mode === "verify" && (
+          {mode === "forgotPassword" && (
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="verificationCode">Verification Code</Label>
-                <div className="relative mt-1">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="verificationCode"
-                    placeholder="123456"
-                    className="pl-10"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                  />
-                </div>
-              </div>
+              <FormField
+                control={loginForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="your@email.com"
+                          className="pl-10"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <Button
-                onClick={handleVerify}
+                onClick={() => handleForgotPassword(loginForm.getValues("email"))}
                 className="w-full"
-                disabled={!verificationCode}
               >
-                Verify and Sign In
+                Send Reset Link
               </Button>
 
               <div className="text-center mt-4">
                 <p className="text-sm text-muted-foreground">
-                  Didn't receive a code?{" "}
+                  Remember your password?{" "}
                   <button
                     type="button"
                     className="text-companion hover:underline"
-                    onClick={() => {
-                      setMode(mode === "verify" ? "login" : "register");
-                    }}
+                    onClick={() => setMode("login")}
                   >
-                    Try again
+                    Sign in
                   </button>
                 </p>
               </div>
