@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Phone } from "lucide-react";
+import { ArrowRight, Phone, Check, Server, Database, Bot, Cloud, Fingerprint } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -147,7 +147,104 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Additional Sections (simplified) */}
+      {/* Tech Stack Section */}
+      <div id="tech-stack" className="py-16 px-4 bg-white">
+        <div className="container mx-auto max-w-7xl">
+          <h2 className="text-4xl font-serif font-bold mb-4 text-center">Our Tech Stack</h2>
+          <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">
+            Leveraging advanced AI technologies to provide personalized care and support for seniors
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <img 
+                src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b" 
+                alt="AI Technology Integration" 
+                className="rounded-xl shadow-lg w-full h-auto object-cover"
+              />
+            </div>
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-2xl font-bold mb-6">AI Integration</h3>
+                <ul className="space-y-4">
+                  <li className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 bg-companion rounded-full flex items-center justify-center mr-3 mt-1">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold flex items-center">
+                        <Bot className="mr-2 h-5 w-5 text-companion" />
+                        OpenAI API
+                      </h4>
+                      <p className="text-gray-600">Conversational AI for personalized recommendations and assistance</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 bg-companion rounded-full flex items-center justify-center mr-3 mt-1">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold flex items-center">
+                        <Cloud className="mr-2 h-5 w-5 text-companion" />
+                        Google Cloud Vision API
+                      </h4>
+                      <p className="text-gray-600">Image recognition for monitoring and safety features</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 bg-companion rounded-full flex items-center justify-center mr-3 mt-1">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold flex items-center">
+                        <Fingerprint className="mr-2 h-5 w-5 text-companion" />
+                        Microsoft Azure Emotion API
+                      </h4>
+                      <p className="text-gray-600">Emotion detection for better understanding and assistance</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-2xl font-bold mb-4">Technology Stack</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <h4 className="font-semibold flex items-center">
+                      <Server className="mr-2 h-5 w-5 text-companion" />
+                      Frontend
+                    </h4>
+                    <p className="text-gray-600">React.js with modern UI libraries</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <h4 className="font-semibold flex items-center">
+                      <Server className="mr-2 h-5 w-5 text-companion" />
+                      Backend
+                    </h4>
+                    <p className="text-gray-600">Node.js with Express.js</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <h4 className="font-semibold flex items-center">
+                      <Database className="mr-2 h-5 w-5 text-companion" />
+                      Database
+                    </h4>
+                    <p className="text-gray-600">Firebase + Supabase</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <h4 className="font-semibold flex items-center">
+                      <Cloud className="mr-2 h-5 w-5 text-companion" />
+                      Hosting
+                    </h4>
+                    <p className="text-gray-600">Vercel for quick deployment</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Services Section */}
       <div id="services" className="py-16 px-4 bg-gray-50">
         <div className="container mx-auto max-w-7xl">
           <h2 className="text-4xl font-serif font-bold mb-12 text-center">Our Services</h2>

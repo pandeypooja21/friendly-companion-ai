@@ -1,15 +1,25 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
+import { LogIn, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const LoginButton = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
 
   const handleAuthClick = () => {
-    navigate(user ? "/settings" : "/auth");
+    if (user) {
+      navigate("/settings");
+    } else {
+      navigate("/auth");
+      toast({
+        title: "Welcome to Senior Companion",
+        description: "Please sign in or register to continue",
+      });
+    }
   };
 
   return (
@@ -17,8 +27,17 @@ const LoginButton = () => {
       onClick={handleAuthClick}
       className="bg-companion hover:bg-companion/90 text-white"
     >
-      <LogIn className="mr-2 h-4 w-4" />
-      {user ? "My Account" : "Login / Register"}
+      {user ? (
+        <>
+          <User className="mr-2 h-4 w-4" />
+          My Account
+        </>
+      ) : (
+        <>
+          <LogIn className="mr-2 h-4 w-4" />
+          Login / Register
+        </>
+      )}
     </Button>
   );
 };
