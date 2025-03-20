@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Phone, Check, Server, Database, Bot, Cloud, Fingerprint } from "lucide-react";
+import { ArrowRight, Phone, Check, Heart, Clock, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,12 +30,13 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero Section */}
+      {/* Hero Section - Updated with new background image */}
       <div
         className="relative bg-cover bg-center py-12 px-4 md:px-6 lg:px-8"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/lovable-uploads/cc4eee7b-1a54-4f44-a305-df86cc3f95e5.png')`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80')`,
           backgroundSize: "cover",
+          backgroundPosition: "center 30%",
         }}
       >
         {/* Navigation */}
@@ -147,95 +147,63 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Tech Stack Section */}
-      <div id="tech-stack" className="py-16 px-4 bg-white">
+      {/* About Us Section - Replacing Tech Stack Section */}
+      <div id="about" className="py-16 px-4 bg-white">
         <div className="container mx-auto max-w-7xl">
-          <h2 className="text-4xl font-serif font-bold mb-4 text-center">Our Tech Stack</h2>
+          <h2 className="text-4xl font-serif font-bold mb-4 text-center">About Us</h2>
           <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">
-            Leveraging advanced AI technologies to provide personalized care and support for seniors
+            Dedicated to enhancing the quality of life for seniors and their families through compassionate care
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b" 
-                alt="AI Technology Integration" 
+                src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1400&q=80" 
+                alt="Senior care team" 
                 className="rounded-xl shadow-lg w-full h-auto object-cover"
               />
             </div>
             <div className="space-y-8">
               <div>
-                <h3 className="text-2xl font-bold mb-6">AI Integration</h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 bg-companion rounded-full flex items-center justify-center mr-3 mt-1">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold flex items-center">
-                        <Bot className="mr-2 h-5 w-5 text-companion" />
-                        OpenAI API
-                      </h4>
-                      <p className="text-gray-600">Conversational AI for personalized recommendations and assistance</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 bg-companion rounded-full flex items-center justify-center mr-3 mt-1">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold flex items-center">
-                        <Cloud className="mr-2 h-5 w-5 text-companion" />
-                        Google Cloud Vision API
-                      </h4>
-                      <p className="text-gray-600">Image recognition for monitoring and safety features</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 bg-companion rounded-full flex items-center justify-center mr-3 mt-1">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold flex items-center">
-                        <Fingerprint className="mr-2 h-5 w-5 text-companion" />
-                        Microsoft Azure Emotion API
-                      </h4>
-                      <p className="text-gray-600">Emotion detection for better understanding and assistance</p>
-                    </div>
-                  </li>
-                </ul>
+                <h3 className="text-2xl font-bold mb-6">Our Mission</h3>
+                <p className="text-gray-700 mb-4">
+                  At Senior Companion, our mission is to provide compassionate, personalized care that allows seniors to live independently, safely, and with dignity in their own homes. We believe in creating meaningful connections that enhance the quality of life for both seniors and their families.
+                </p>
+                <p className="text-gray-700">
+                  Founded in 2009, we've grown to become the most trusted senior care service in San Antonio and surrounding areas, serving over 190 families with dedication and heart.
+                </p>
               </div>
 
               <div>
-                <h3 className="text-2xl font-bold mb-4">Technology Stack</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <h3 className="text-2xl font-bold mb-4">Our Values</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
                     <h4 className="font-semibold flex items-center">
-                      <Server className="mr-2 h-5 w-5 text-companion" />
-                      Frontend
+                      <Heart className="mr-2 h-5 w-5 text-companion" />
+                      Compassion
                     </h4>
-                    <p className="text-gray-600">React.js with modern UI libraries</p>
+                    <p className="text-gray-600">We care deeply about every client we serve</p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
                     <h4 className="font-semibold flex items-center">
-                      <Server className="mr-2 h-5 w-5 text-companion" />
-                      Backend
+                      <Shield className="mr-2 h-5 w-5 text-companion" />
+                      Safety
                     </h4>
-                    <p className="text-gray-600">Node.js with Express.js</p>
+                    <p className="text-gray-600">We prioritize the wellbeing of our clients</p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
                     <h4 className="font-semibold flex items-center">
-                      <Database className="mr-2 h-5 w-5 text-companion" />
-                      Database
+                      <Check className="mr-2 h-5 w-5 text-companion" />
+                      Quality
                     </h4>
-                    <p className="text-gray-600">Firebase + Supabase</p>
+                    <p className="text-gray-600">We deliver exceptional service every time</p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
                     <h4 className="font-semibold flex items-center">
-                      <Cloud className="mr-2 h-5 w-5 text-companion" />
-                      Hosting
+                      <Clock className="mr-2 h-5 w-5 text-companion" />
+                      Reliability
                     </h4>
-                    <p className="text-gray-600">Vercel for quick deployment</p>
+                    <p className="text-gray-600">We're there when you need us, every time</p>
                   </div>
                 </div>
               </div>
