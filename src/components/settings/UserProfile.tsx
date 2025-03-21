@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, User, AlertCircle } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
@@ -26,6 +27,7 @@ const UserProfile = () => {
   const { user, userProfile } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isMobile = useIsMobile();
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -72,14 +74,14 @@ const UserProfile = () => {
   };
 
   return (
-    <Card className="glass-panel border-none">
-      <CardHeader>
+    <Card className={`glass-panel border-none ${isMobile ? 'p-0' : ''}`}>
+      <CardHeader className={isMobile ? 'px-4 py-3' : ''}>
         <CardTitle className="text-xl flex items-center">
           <User className="mr-2 h-5 w-5 text-companion" />
           Your Profile
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className={isMobile ? 'px-4 pb-6' : ''}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
