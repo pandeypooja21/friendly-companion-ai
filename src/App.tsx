@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import CompanionPage from "./pages/CompanionPage";
@@ -26,37 +25,36 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
-            <Route path="/home" element={
-              <ProtectedRoute>
+            <Route path="/" element={
+              // <ProtectedRoute>
                 <HomePage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/companion" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <CompanionPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/reminders" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <RemindersPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/health" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <HealthPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/emergency" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <EmergencyPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="/settings" element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <SettingsPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
           </Routes>
