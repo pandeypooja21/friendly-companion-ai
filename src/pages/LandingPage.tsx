@@ -1,19 +1,23 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Phone, Check, Heart, Clock, Shield } from "lucide-react";
+import { ArrowRight, Phone, Check, Heart, Clock, Shield, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import LoginButton from "@/components/auth/LoginButton";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +32,15 @@ const LandingPage = () => {
     setMessage("");
   };
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section - Updated with new background image showing elderly support */}
       <div
-        className="relative bg-cover bg-center py-12 px-4 md:px-6 lg:px-8"
+        className="relative bg-cover bg-center py-8 md:py-12 px-4 md:px-6 lg:px-8"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80')`,
           backgroundSize: "cover",
@@ -41,43 +49,79 @@ const LandingPage = () => {
       >
         {/* Navigation */}
         <div className="container mx-auto max-w-7xl">
-          <nav className="flex justify-between items-center mb-12">
+          <nav className="flex justify-between items-center mb-8 md:mb-12">
             <div className="flex items-center">
-              <h1 className="text-2xl font-serif text-white font-bold">
+              <h1 className="text-xl md:text-2xl font-serif text-white font-bold">
                 Senior Companion
               </h1>
             </div>
-            <div className="flex items-center space-x-6">
-              <a href="#" className="text-white hover:text-gray-300">Home</a>
-              <a href="#services" className="text-white hover:text-gray-300">Services</a>
-              <a href="#about" className="text-white hover:text-gray-300">About Us</a>
-              <a href="#resources" className="text-white hover:text-gray-300">Resources</a>
-              <a href="#contact" className="text-white hover:text-gray-300">Contact Us</a>
-              <LoginButton />
-            </div>
+            
+            {/* Mobile menu button */}
+            {isMobile && (
+              <button 
+                onClick={toggleMobileMenu}
+                className="text-white z-50"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </button>
+            )}
+            
+            {/* Desktop navigation */}
+            {!isMobile && (
+              <div className="hidden md:flex items-center space-x-6">
+                <a href="#" className="text-white hover:text-gray-300">Home</a>
+                <a href="#services" className="text-white hover:text-gray-300">Services</a>
+                <a href="#about" className="text-white hover:text-gray-300">About Us</a>
+                <a href="#resources" className="text-white hover:text-gray-300">Resources</a>
+                <a href="#contact" className="text-white hover:text-gray-300">Contact Us</a>
+                <LoginButton />
+              </div>
+            )}
           </nav>
+          
+          {/* Mobile menu overlay */}
+          {isMobile && mobileMenuOpen && (
+            <div className="fixed inset-0 bg-black/90 z-40 flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center space-y-6 text-xl">
+                <a href="#" className="text-white hover:text-gray-300" onClick={toggleMobileMenu}>Home</a>
+                <a href="#services" className="text-white hover:text-gray-300" onClick={toggleMobileMenu}>Services</a>
+                <a href="#about" className="text-white hover:text-gray-300" onClick={toggleMobileMenu}>About Us</a>
+                <a href="#resources" className="text-white hover:text-gray-300" onClick={toggleMobileMenu}>Resources</a>
+                <a href="#contact" className="text-white hover:text-gray-300" onClick={toggleMobileMenu}>Contact Us</a>
+                <div onClick={toggleMobileMenu}>
+                  <LoginButton />
+                </div>
+              </div>
+            </div>
+          )}
 
-          <div className="flex flex-col md:flex-row items-center justify-between">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between">
             {/* Hero Text */}
-            <div className="md:w-1/2 mb-12 md:mb-0">
-              <h2 className="text-5xl md:text-6xl font-serif text-white leading-tight mb-6">
+            <div className="md:w-1/2 mb-8 md:mb-0 text-center md:text-left">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-white leading-tight mb-4 md:mb-6">
                 Providing Peace Of Mind With Personalized In-Home Senior Care
               </h2>
-              <p className="text-xl text-white mb-8">
+              <p className="text-lg md:text-xl text-white mb-6 md:mb-8">
                 In San Antonio and All Surrounding Areas
               </p>
               <Button 
-                className="bg-companion hover:bg-companion/90 text-white" 
+                className="bg-companion hover:bg-companion/90 text-white w-full sm:w-auto" 
                 onClick={() => navigate("/auth")}
+                size={isMobile ? "lg" : "default"}
               >
                 Get Started Now
               </Button>
             </div>
 
             {/* Contact Card */}
-            <div className="md:w-2/5">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <h3 className="text-xl font-bold mb-6">Don't delay to talk with us</h3>
+            <div className="w-full md:w-2/5 max-w-md mx-auto md:mx-0">
+              <div className="bg-white rounded-xl p-4 md:p-6 shadow-lg">
+                <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6">Don't delay to talk with us</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <Input 
@@ -87,7 +131,7 @@ const LandingPage = () => {
                       required
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Input 
                       placeholder="Email Address" 
                       type="email"
@@ -107,14 +151,14 @@ const LandingPage = () => {
                     <Textarea 
                       placeholder="Your message" 
                       className="resize-none"
-                      rows={4}
+                      rows={3}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                     />
                   </div>
                   <div className="flex justify-end">
-                    <Button type="submit" className="rounded-full bg-green-500 hover:bg-green-600 h-12 w-12 p-0">
-                      <ArrowRight className="h-5 w-5" />
+                    <Button type="submit" className="rounded-full bg-green-500 hover:bg-green-600 h-10 w-10 sm:h-12 sm:w-12 p-0">
+                      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                     </Button>
                   </div>
                 </form>
